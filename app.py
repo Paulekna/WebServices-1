@@ -93,35 +93,35 @@ def bad_request(error):
 #GET
 #curl -i http://localhost:80/tv_program
 @app.route('/tv_programs', methods=['GET'])
-def program():
-	tv_program = []
+def programs():
+	tv_programs = []
 	television = request.args.get('television')
 	if television is None:
 		return jsonify(tv_db)
 	for i in tv_db:
         	if television in i['television']:
-                        tv_program.append(i)
-        return jsonify(tv_program)
+                        tv_programs.append(i)
+        return jsonify(tv_programs)
 #GET/<OPTION>
-#curl -i http://localhost:80/tv_program/<id>
+#curl -i http://localhost:80/tv_programs/<id>
 @app.route('/tv_programs/<int:id>', methods=['GET'])
-def tv_program_element_by_id(id):
-	element = []
+def tv_program_by_id(id):
+	program = []
 	for i in tv_db:
 		if i['id'] == id:
-			element = i
-	if len(element) == 0:
+			program = i
+	if len(program) == 0:
 		abort(404)
-	return jsonify(element)
+	return jsonify(program)
 
 #POST
-#curl -i -H "Content-Type: application/json" - X POST -d '{"title":"<>", "television":"<>","start_time":"<>", etc <optional>}' https://localhost:80/tv_program 
+#curl -i -H "Content-Type: application/json" - X POST -d '{"title":"<>", "television":"<>","start_time":"<>", etc <optional>}' https://localhost:80/tv_programs 
 @app.route('/tv_programs', methods=['POST'])
-def new_element():
+def new_program():
     if not request.json or not 'title' in request.json  or not 'television' in request.json or not 'start_time' in request.json:
        abort(400)
     id = tv_db[-1]['id'] + 1
-    element = {
+    program = {
         'id': id,
 	'television': request.json['television'],
 	'type': request.json.get('type',""),
@@ -131,43 +131,43 @@ def new_element():
 	'legal_age': request.json.get('legal_age', ""),
 	'start_time': request.json['start_time']
     }
-    tv_db.append(element)
+    tv_db.append(program)
     response = jsonify({'CREATED':'true'})
     response.status_code = 201
-    response.headers['location'] = '/tv_program/%s' %id
+    response.headers['location'] = '/tv_programs/%s' %id
     return response
 
 #PUT
-#curl -i -H "Content-Type: application/json" - X PUT -d '{"<>":"<>"}' https://localhost:80/tv_program/<element_id>
+#curl -i -H "Content-Type: application/json" - X PUT -d '{"<>":"<>"}' https://localhost:80/tv_programs/<program_id>
 @app.route('/tv_programs/<int:id>', methods=['PUT'])
-def update_element(id):
-	element = []
+def update_program(id):
+	program = []
 	for i in tv_db:
         	if i['id'] == id:
-                        element = i
-	if len(element) == 0:
+                        program = i
+	if len(program) == 0:
 		abort(404)
 	if not request.json:
 		abort(400)
-	element['title'] = request.json.get('title', element['title'])
-	element['description'] = request.json.get('description', element['description'])
-	element['television'] = request.json.get('television', element['television'])
-	element['type'] = request.json.get('type', element['type'])
-	element['start_time'] = request.json.get('start_time', element['start_time'])
-	element['release_year'] = request.json.get('release_year', element['release_year'])
-	element['legal_age'] = request.json.get('legal_age', element['legal_age'])
+	program['title'] = request.json.get('title', program['title'])
+	program['description'] = request.json.get('description', program['description'])
+	program['television'] = request.json.get('television', program['television'])
+	program['type'] = request.json.get('type', program['type'])
+	program['start_time'] = request.json.get('start_time', program['start_time'])
+	program['release_year'] = request.json.get('release_year', program['release_year'])
+	program['legal_age'] = request.json.get('legal_age', program['legal_age'])
 	return jsonify({'UPDATED':'true'}), 201
 #DELETE
-#curl -i -H "Content-Type: application/json" -X DELETE http://localhost:80/tv_program/<element_id>
+#curl -i -H "Content-Type: application/json" -X DELETE http://localhost:80/tv_program/<program_id>
 @app.route('/tv_programs/<int:id>', methods=['DELETE'])
-def delete_element(id):
-        element = []
+def delete_program(id):
+        program = []
         for i in tv_db:
                 if i['id'] == id:
-                        element = i
-        if len(element) == 0:
+                        program = i
+        if len(program) == 0:
                 abort(404)
-        tv_db.remove(element)
+        tv_db.remove(program)
         return jsonify({'DELETED':'true'})
 
 if __name__== "__main__":
