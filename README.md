@@ -8,17 +8,17 @@ docker-compose up -d
 Paleisti terminale galima šias užklausas, naudojant curl:
 
 1.GET metodas. Parodyti visą TV programą:
-#curl -i http://localhost:80/tv_program
+#curl -i http://localhost:80/tv_programs
 
 2.GET metodas. Parodyti programą pagal pasirinktą id:
-#curl -i http://localhost:80/tv_program/<id>
+#curl -i http://localhost:80/tv_programs/<id>
 
 3.POST metodas. Patalpinti dar vieną įrašą, rodomą per tv:
-#curl -i -H "Content-Type: application/json" - X POST -d '{"title":"<>", "television":"<>","start_time":"<>", etc <optional>}' https://localhost:80/tv_program 
+#curl -i -H "Content-Type: application/json" - X POST -d '{"title":"<>", "television":"<>","start_time":"<>", etc <optional>}' https://localhost:80/tv_programs
 
 4.PUT metodas. Atnaujinti įrašą, rodomą per tv, pagal įrašo id:
-#curl -i -H "Content-Type: application/json" - X PUT -d '{"<>":"<>"}' https://localhost:80/tv_program/<element_id>
+#curl -i -H "Content-Type: application/json" - X PUT -d '{"<>":"<>"}' https://localhost:80/tv_programs/<element_id>
 
 5.DELETE metodas. Ištrinti įrašą, rodomą per tv, pagal id:
-#curl -i -H "Content-Type: application/json" -X DELETE http://localhost:80/tv_program/<element_id>
+#curl -i -H "Content-Type: application/json" -X DELETE http://localhost:80/tv_programs/<element_id>
 
