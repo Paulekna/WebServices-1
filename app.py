@@ -92,7 +92,7 @@ def bad_request(error):
 
 #GET
 #curl -i http://localhost:80/tv_program
-@app.route('/tv_program', methods=['GET'])
+@app.route('/tv_programs', methods=['GET'])
 def program():
 	tv_program = []
 	television = request.args.get('television')
@@ -104,7 +104,7 @@ def program():
         return jsonify(tv_program)
 #GET/<OPTION>
 #curl -i http://localhost:80/tv_program/<id>
-@app.route('/tv_program/<int:id>', methods=['GET'])
+@app.route('/tv_programs/<int:id>', methods=['GET'])
 def tv_program_element_by_id(id):
 	element = []
 	for i in tv_db:
@@ -116,12 +116,13 @@ def tv_program_element_by_id(id):
 
 #POST
 #curl -i -H "Content-Type: application/json" - X POST -d '{"title":"<>", "television":"<>","start_time":"<>", etc <optional>}' https://localhost:80/tv_program 
-@app.route('/tv_program', methods=['POST'])
+@app.route('/tv_programs', methods=['POST'])
 def new_element():
     if not request.json or not 'title' in request.json  or not 'television' in request.json or not 'start_time' in request.json:
        abort(400)
+    id = tv_db[-1]['id'] + 1
     element = {
-        'id': tv_db[-1]['id'] + 1,
+        'id': id,
 	'television': request.json['television'],
 	'type': request.json.get('type',""),
 	'title': request.json['title'],
@@ -133,13 +134,12 @@ def new_element():
     tv_db.append(element)
     response = jsonify({'CREATED':'true'})
     response.status_code = 201
-    id=tv_db[-1]['id'] + 1
     response.headers['location'] = '/tv_program/%s' %id
     return response
 
 #PUT
 #curl -i -H "Content-Type: application/json" - X PUT -d '{"<>":"<>"}' https://localhost:80/tv_program/<element_id>
-@app.route('/tv_program/<int:id>', methods=['PUT'])
+@app.route('/tv_programs/<int:id>', methods=['PUT'])
 def update_element(id):
 	element = []
 	for i in tv_db:
@@ -159,7 +159,7 @@ def update_element(id):
 	return jsonify({'UPDATED':'true'}), 201
 #DELETE
 #curl -i -H "Content-Type: application/json" -X DELETE http://localhost:80/tv_program/<element_id>
-@app.route('/tv_program/<int:id>', methods=['DELETE'])
+@app.route('/tv_programs/<int:id>', methods=['DELETE'])
 def delete_element(id):
         element = []
         for i in tv_db:
