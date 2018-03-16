@@ -124,7 +124,11 @@ def new_element():
 	'start_time': request.json['start_time']
     }
     tv_db.append(element)
-    return jsonify(element), 201
+    response = jsonify({'CREATED':'true'})
+    response.status_code = 201
+    id=tv_db[-1]['id'] + 1
+    response.headers['location'] = '/tv_program/%s' %id
+    return response
 
 #PUT
 #curl -i -H "Content-Type: application/json" - X PUT -d '{"<>":"<>"}' https://localhost:80/tv_program/<element_id>
