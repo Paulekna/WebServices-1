@@ -98,14 +98,14 @@ def program():
 #GET/<OPTION>
 #curl -i http://localhost:80/tv_program/<id>
 @app.route('/tv_program/<int:id>', methods=['GET'])
-def program_by_id(id):
-	program = []
+def tv_program_element_by_id(id):
+	element = []
 	for i in tv_db:
 		if i['id'] == id:
-			program = i
-	if len(program) == 0:
+			element = i
+	if len(element) == 0:
 		abort(404)
-	return jsonify(program)
+	return jsonify(element)
 
 #POST
 #curl -i -H "Content-Type: application/json" - X POST -d '{"title":"<>", "television":"<>","start_time":"<>", etc <optional>}' https://localhost:80/tv_program 
@@ -129,7 +129,7 @@ def new_element():
 #PUT
 #curl -i -H "Content-Type: application/json" - X PUT -d '{"<>":"<>"}' https://localhost:80/tv_program/<element_id>
 @app.route('/tv_program/<int:id>', methods=['PUT'])
-def changed_element(id):
+def update_element(id):
 	element = []
 	for i in tv_db:
         	if i['id'] == id:
@@ -149,14 +149,14 @@ def changed_element(id):
 #DELETE
 #curl -i -H "Content-Type: application/json" -X DELETE http://localhost:80/tv_program/<element_id>
 @app.route('/tv_program/<int:id>', methods=['DELETE'])
-def deleted_TV_element(id):
-        entry = []
+def delete_element(id):
+        element = []
         for i in tv_db:
                 if i['id'] == id:
-                        entry = i
-        if len(entry) == 0:
+                        element = i
+        if len(element) == 0:
                 abort(404)
-        tv_db.remove(entry)
+        tv_db.remove(element)
         return jsonify({'DELETED':'true'})
 
 if __name__== "__main__":
