@@ -94,7 +94,14 @@ def bad_request(error):
 #curl -i http://localhost:80/tv_program
 @app.route('/tv_program', methods=['GET'])
 def program():
-        return jsonify(tv_db)
+	tv_program = []
+	television = request.args.get('television')
+	if television is None:
+		return jsonify(tv_db)
+	for i in tv_db:
+        	if television in i['television']:
+                        tv_program.append(i)
+        return jsonify(tv_program)
 #GET/<OPTION>
 #curl -i http://localhost:80/tv_program/<id>
 @app.route('/tv_program/<int:id>', methods=['GET'])
