@@ -1,4 +1,5 @@
 Adresas: http://193.219.91.103:8067
+Darbą atliko Dovilė Patiejūnaitė ir Paulius Matijošaitis
 Web servisas tv programa, pasiekiamas 80 portu.
 Paleisti web servisą, reikia įsirašyti docker ir docker-compose.
 Paleidimo komandos:
