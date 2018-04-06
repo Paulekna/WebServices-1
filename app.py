@@ -156,7 +156,7 @@ def update_program(id):
 	program['start_time'] = request.json.get('start_time', program['start_time'])
 	program['release_year'] = request.json.get('release_year', program['release_year'])
 	program['legal_age'] = request.json.get('legal_age', program['legal_age'])
-	return jsonify({'UPDATED':'true'}), 201
+	return jsonify({'UPDATED':'true'}), 200
 #DELETE
 #curl -i -H "Content-Type: application/json" -X DELETE http://localhost:80/tv_program/<program_id>
 @app.route('/tv_programs/<int:id>', methods=['DELETE'])
