@@ -1,0 +1,27 @@
+
+web:
+  build: .
+  command: python app.py
+  ports:
+    - "80:5000"
+  volumes:
+    - .:/code
+  links:
+    - redis
+redis:
+  image: redis
+
+
+web2:
+  build: ./Web_Servisai/
+  command: python ./Web_Servisai/app.py
+  ports:
+   - "80:5000"
+  depends_on:
+    - web
+  volumes:
+    - .:/code
+  links:
+    - redis
+redis:
+  image: redis
