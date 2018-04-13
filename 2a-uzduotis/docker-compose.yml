@@ -4,8 +4,8 @@ version: '2'
 
 services:
   web2:
-    build: ./Web_Servisai
-    command: python ./Web_Servisai/app.py runserver 0.0.0.0:81
+    build: ./Web_Service
+    command: python ./Web_Service/app.py runserver 0.0.0.0:81
     ports:
      - "81:5000"
     volumes:
