@@ -23,3 +23,34 @@ Paleisti terminale galima šias užklausas, naudojant curl:
 5.DELETE metodas. Ištrinti įrašą, rodomą per tv, pagal id:
 #curl -i -H "Content-Type: application/json" -X DELETE http://localhost:80/tv_programs/<element_id>
 
+2 užduotis
+
+Pasileisti reikia:
+
+docker-compose build 
+
+docker-compose up
+
+Servisams naudojami 80 ir 81 portai. 80 - mūsų serviso, 81 - serviso, kurį įtraukiame į savajį.
+
+Galimos užklausos 2-ąjai užduočiai:
+
+1. GET metodas. Parodyti naudojamo serviso visas futbolo komandas:
+
+#curl -i http://localhost:80/football_teams
+
+2. GET metodas. Parodyti konkrečioje tv_programoje, esančias futbolo komandas:
+
+#curl -i http://localhost:80/tv_programs/<tv_:id>/football_teams
+
+3. POST metodas. Sukuria nauja televizijos programos dalį, kurioje įdeda tam tikrų futbolo komandų identifikatorius.
+
+#curl -i -H "Content-Type: application/json" - X POST -d '{"title":"<>", "television":"<>","start_time":"<>","football_teams":"<"id":<>>" etc <optional>}' https://localhost:80/tv_programs/<tv_:id>/football_teams
+
+4. DELETE metodas. Ištrina egzistuojančių futbolo komandų numerius iš tv programos.
+
+#curl -i -H "Content-Type: application/json" -X DELETE http://localhost:80/tv_programs/<tv_:id>/football_teams/<element_id>
+
+
+
+
