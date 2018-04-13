@@ -1,6 +1,6 @@
 # -*- coding: UTF-8 -*-
 from flask import Flask
-from redis import Redis
+#from redis import Redis
 from flask import request
 from flask import jsonify
 from flask import abort
@@ -14,13 +14,13 @@ import requests
 import json
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
-redis = Redis(host='redis',port=6379)
+#redis = Redis(host='redis',port=6379)
 
 now = datetime.datetime.now()
 @app.route('/')
 def hello():
-	redis.incr('counter')
-	return 'Viso lankytojų: %s. TV programa %s/%s/%s.' % (redis.get('counter'),now.year, now.month, now.day)
+	#redis.incr('counter')
+	return 'TV programa %s/%s/%s.' % (now.year, now.month, now.day)
 
 tv_db = [
 	{
@@ -241,4 +241,4 @@ def delete_football_team(id, f_id):
 
 
 if __name__== "__main__":
-	app.run(host="0.0.0.0",debug=True, port=80)
+	app.run(host="0.0.0.0",debug=True, port=5000)
