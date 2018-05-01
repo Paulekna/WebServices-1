@@ -131,19 +131,12 @@ def tv_program_by_id(id):
 
 #POST
 #curl -i -H "Content-Type: application/json" - X POST -d '{"title":"<>", "television":"<>","start_time":"<>", etc <optional>}' https://localhost:80/tv_programs 
+
 @app.route('/tv_programs', methods=['POST'])
-def new_program():
+def new_program2():
     if not request.json or not 'title' in request.json  or not 'television' in request.json or not 'start_time' in request.json:
        abort(400)
     id = tv_db[-1]['id'] + 1
-    for team in request.json.get('football_teams', [{}]):
-        try:
-            ft = team['id']
-            url = "http://web2:81/football_teams/%s" %ft
-            r = requests.get(url).text
-            data = json.loads(r)
-        except ValueError:
-	    return abort(404)
     program = {
         'id': id,
 	'television': request.json['television'],
@@ -153,9 +146,32 @@ def new_program():
 	'release_year': request.json.get('release_year', ""),
 	'legal_age': request.json.get('legal_age', ""),
 	'start_time': request.json['start_time'],
-	'football_teams': request.json.get('football_teams',[])
-    }
+	'football_teams': []
+	}
     tv_db.append(program)
+    if request.json["football_teams"]:
+        for i in range(0,len(request.json["football_teams"])):
+            if not 'Captain' in request.json["football_teams"][i] or not 'Name' in request.json["football_teams"][i] or not 'Stadium' in request.json["football_teams"][i] or not 'Attendance' in request.json["football_teams"][i] or not 'Country' in request.json["football_teams"][i]:
+				abort(400)
+    	    name = request.json["football_teams"][i]['Name']
+    	    country = request.json["football_teams"][i]['Country']
+    	    stadium = request.json["football_teams"][i]['Stadium']
+    	    attendance = request.json["football_teams"][i]['Attendance']
+    	    captain = request.json["football_teams"][i]['Captain']
+    	    url = 'http://web2:81/football_teams'
+    	    new_football_team = {
+	       'Name': name,
+	       'Country': country,
+	       'Stadium': stadium,
+	       'Attendance': attendance,
+	       'Captain': captain,
+	    }
+    	    r = requests.post(url, json=new_football_team)
+            code = r.status_code
+    	    r = json.loads(r.text)
+    	    for i in tv_db:
+                if i['id'] == id:
+                    i['football_teams'].append({'id':r['ID']})
     response = jsonify({'CREATED':'true'})
     response.status_code = 201
     response.headers['location'] = '/tv_programs/%s' %id
@@ -186,14 +202,18 @@ def update_program(id):
 #curl -i -H "Content-Type: application/json" -X DELETE http://localhost:80/tv_program/<program_id>
 @app.route('/tv_programs/<int:id>', methods=['DELETE'])
 def delete_program(id):
-        program = []
-        for i in tv_db:
-                if i['id'] == id:
-                        program = i
-        if len(program) == 0:
-                abort(404)
-        tv_db.remove(program)
-        return jsonify({'DELETED':'true'})
+    program = {}
+    for i in tv_db:
+       if i['id'] == id:
+           program = i
+    if len(program) == 0:
+        abort(404)
+    if len(program['football_teams']) != 0:
+        for i in range(0, len(program['football_teams'])):
+            url = 'http://web2:81/football_teams/'+str(program["football_teams"][i]["id"])
+            r = requests.delete(url)
+    tv_db.remove(program)
+    return jsonify(program)
 
 # Antra uzduotis
 
@@ -222,27 +242,6 @@ def get_football_team(id):
 				program_by_team.append(i)
 	return jsonify(program_by_team)
 
-@app.route('/tv_programs/<int:id>/football_teams', methods=['POST'])
-def new_football_team(id):
-    url = 'http://web2:81/football_teams'
-    new_football_team = {
-		'Name': request.json['Name'],
-		'Country': request.json['Country'],
-		'Stadium': request.json['Stadium'],
-		'Attendance': request.json['Attendance'],
-		'Captain': request.json['Captain'],
-	}
-    r = requests.post(url, json=new_football_team)
-    r = json.loads(r.text)
-    for i in tv_db:
-        if i['id'] == id:
-            i['football_teams'].append({'id':r['ID']})
-  #  if len(program) == 0:
-   #         abort(404)
-    response = jsonify({'CREATED':'true'})
-    response.status_code = 201
-    return response
-#location
 @app.route('/tv_programs/<int:id>/football_teams/<int:f_id>', methods=['DELETE'])
 def delete_football_team(id, f_id):
     url = 'http://web2:81/football_teams/'+str(f_id)
