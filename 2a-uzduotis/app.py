@@ -5,6 +5,7 @@ from flask import request
 from flask import jsonify
 from flask import abort
 from flask import make_response
+import copy
 import sys
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -46,7 +47,10 @@ tv_db = [
 		'description' : '',
 		'release_year' : '',
 		'legal_age' : '',
-		'football_teams' : []
+		'football_teams' : [
+			{'id' : 5},
+			{'id' : 6}
+		]
 	},
 	{
 		'id' : 3,
@@ -109,14 +113,31 @@ def bad_request(error):
 #curl -i http://localhost:80/tv_program
 @app.route('/tv_programs', methods=['GET'])
 def programs():
-	tv_programs = []
-	television = request.args.get('television')
-	if television is None:
-		return jsonify(tv_db)
-	for i in tv_db:
-        	if television in i['television']:
-                        tv_programs.append(i)
+    tv_programs = []
+    television = request.args.get('television')
+    embed = request.args.get('embedded','')
+    if embed == 'football_teams':
+        tv_programs = copy.deepcopy(tv_db)
+        for i in range(0,len(tv_programs)):
+            if len(tv_programs[i]["football_teams"])!=0:
+                for j in range(0,len(tv_programs[i]["football_teams"])):
+                    identif = tv_programs[i]["football_teams"][j]['id']
+                    url = 'http://web2:81/football_teams/'+str(identif) 		
+                    r = requests.get(url).text
+                    r = json.loads(r)
+                    tv_programs[i]["football_teams"][j]=r
 	return jsonify(tv_programs)
+    if television is None and embed is None:
+        return jsonify(tv_db)
+    if television is not None:
+        for i in tv_db:
+            if television in i['television']:
+                tv_programs.append(i)
+        return jsonify(tv_programs)
+    else:
+        return jsonify(tv_db)
+
+
 #GET/<OPTION>
 #curl -i http://localhost:80/tv_programs/<id>
 @app.route('/tv_programs/<int:id>', methods=['GET'])
@@ -196,7 +217,24 @@ def update_program(id):
 	program['start_time'] = request.json.get('start_time', program['start_time'])
 	program['release_year'] = request.json.get('release_year', program['release_year'])
 	program['legal_age'] = request.json.get('legal_age', program['legal_age'])
-        program['football_teams'] = request.json.get('football_teams', program['football_teams'])
+	if len(program['football_teams']) != 0:
+            for i in range(0,len(request.json["football_teams"])):
+                if not 'Captain' in request.json["football_teams"][i] or not 'Name' in request.json["football_teams"][i] or not 'Stadium' in request.json["football_teams"][i] or not 'Attendance' in request.json["football_teams"][i] or not 'Country' in request.json["football_teams"][i]:
+		    abort(400)
+    	        name = request.json["football_teams"][i]['Name']
+    	        country = request.json["football_teams"][i]['Country']
+    	        stadium = request.json["football_teams"][i]['Stadium']
+    	        attendance = request.json["football_teams"][i]['Attendance']
+    	        captain = request.json["football_teams"][i]['Captain']
+    	        url = 'http://web2:81/football_teams/'+str(program['football_teams'][i]['id'])
+    	        new_football_team = {
+	            'Name': name,
+	            'Country': country,
+	            'Stadium': stadium,
+	            'Attendance': attendance,
+	            'Captain': captain,
+	        }
+    	        r = requests.put(url, json=new_football_team)
 	return jsonify({'UPDATED':'true'}), 200
 #DELETE
 #curl -i -H "Content-Type: application/json" -X DELETE http://localhost:80/tv_program/<program_id>
